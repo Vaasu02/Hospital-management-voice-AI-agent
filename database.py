@@ -1,3 +1,5 @@
+import db_demo
+import db_demo
 import datetime as dt
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, create_engine 
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
@@ -21,4 +23,10 @@ class Appointment(Base):
 def init_db()->None:
     Base.metadata.create_all(bind=engine)
 
-init_db()
+def get_db(db: Session = SessionLocal()):
+    try:
+        yield db
+    finally:
+        db.close()
+
+# init_db()
