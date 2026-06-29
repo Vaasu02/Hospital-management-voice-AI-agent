@@ -1,8 +1,6 @@
-import db_demo
-import db_demo
 import datetime as dt
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, create_engine 
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 DATABASE_URL = "sqlite:///./appointments_db.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -23,7 +21,8 @@ class Appointment(Base):
 def init_db()->None:
     Base.metadata.create_all(bind=engine)
 
-def get_db(db: Session = SessionLocal()):
+def get_db():
+    db = SessionLocal()
     try:
         yield db
     finally:

@@ -35,7 +35,7 @@ class CancelAppointmentResponse (BaseModel):
 
 @app.post("/schedule_appointment/")
 def schedule_appointment(request: AppointmentRequest, db: Session=Depends(get_db)):
-    if(request.patient_name==None & request.start_time == None):
+    if request.patient_name is None and request.start_time is None:
         raise HTTPException(status_code=400, detail="patient name and date time is required")
     new_appointment = Appointment(
         patient_name=request.patient_name,
@@ -77,9 +77,9 @@ def cancel_appointment(request: CancelAppointmentRequest, db: Session = Depends(
     return CancelAppointmentResponse(canceled_count=len(appointments))
 
 # list Appointment
-@app.post("/list_appointments/")
-def list_appointments(request: AppointmentRequest, db: Session = Depends(get_db)):
-    start_dt = dt.datetime.combine(request.date, dt.time.min)
+@app.get("/list_appointments/")
+def list_appointments(date: dt.date, db: Session = Depends(get_db)):
+    start_dt = dt.datetime.combine(date, dt.time.min)
     end_dt = start_dt + dt.timedelta(days=1)
     result = db.execute(
         select(Appointment)
@@ -99,4 +99,9 @@ def list_appointments(request: AppointmentRequest, db: Session = Depends(get_db)
             created_at=appointment.created_at,
         )
         booked_appointments.append(appointment_obj)
-    return booked_appointments
+    return booked_appointments
+
+import uvicorn
+if __name__=="__main__":
+    uvicorn.run("backend:app", host="127.0.0.1", port=4444,reload=True)
+
