@@ -31,7 +31,10 @@ class CancelAppointmentRequest (BaseModel):
 
 class CancelAppointmentResponse (BaseModel):
     canceled_count: int
-    
+
+class ListAppointmentRequest(BaseModel):
+    date: dt.date
+
 
 @app.post("/schedule_appointment/")
 def schedule_appointment(request: AppointmentRequest, db: Session=Depends(get_db)):
@@ -77,9 +80,9 @@ def cancel_appointment(request: CancelAppointmentRequest, db: Session = Depends(
     return CancelAppointmentResponse(canceled_count=len(appointments))
 
 # list Appointment
-@app.get("/list_appointments/")
-def list_appointments(date: dt.date, db: Session = Depends(get_db)):
-    start_dt = dt.datetime.combine(date, dt.time.min)
+@app.post("/list_appointments/")
+def list_appointments(request: ListAppointmentRequest, db: Session = Depends(get_db)):
+    start_dt = dt.datetime.combine(request.date, dt.time.min)
     end_dt = start_dt + dt.timedelta(days=1)
     result = db.execute(
         select(Appointment)

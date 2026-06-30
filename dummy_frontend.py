@@ -47,8 +47,7 @@ if st.button("Cancel appointments"):
 appointments_date = st.date_input("Date to check appointments", key="check_appointment_date", value=dt.date.today())
 if st.button("Check appointments"):
     try:
-        params = {"date": appointments_date.isoformat()}
-        resp = requests.get(f"{base_url}/list_appointments/", params=params, timeout=10)
+        resp = requests.post(f"{base_url}/list_appointments/", json={"date": appointments_date.isoformat()}, timeout=10)
         resp.raise_for_status()
         st.dataframe(resp.json(), use_container_width=True, hide_index=True)
     except requests.RequestException as exc:
